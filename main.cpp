@@ -5,7 +5,6 @@
 #include <vector>
 #include <stdexcept>
 
-#include <Eigen/Dense>
 
 #include "helpers.h"
 
@@ -28,16 +27,10 @@ int main(int argc, char* argv[]) {
         // model.cols()        // Количество столбцов (785)
         // model.size()        // Общее количество элементов (7850)
         Eigen::MatrixXf model = mnist::read_mat_from_file(10, 785, modelFile);
-        std::cout << "Matrix loaded: " << model.rows() << "x" << model.cols() << std::endl;
+        // std::cout << "Matrix loaded: " << model.rows() << "x" << model.cols() << std::endl;
         
         
-        std::ifstream model_file(modelFile);
-        if (!model_file.is_open()) {
-            throw std::runtime_error("Cannot open test file");
-        }
-        // загрузили коэффициенты
-        //auto coefs = mnist::read_vector(model_file);
-        //model_file.close();
+
 
         // Загружаем тестовые данные
         std::ifstream test_file(testFile);
@@ -45,9 +38,10 @@ int main(int argc, char* argv[]) {
             throw std::runtime_error("Cannot open test file");
         }
         
-        int label;
+        int label;  // здесь будет правильный ответ, с которым потом сравним предсказание
         mnist::Classifier::features_t features;
-
+        int correct = 0;
+        int total = 0;
 
         while(mnist::read_features_with_label(test_file, features, label))
         {
@@ -62,26 +56,28 @@ int main(int argc, char* argv[]) {
             // A (10x785) * x (785x1) = scores (10x1)
             Eigen::VectorXf scores = model * x;
 
-
+            int predicted = 0;
+            float max_prob = mnist::sigma(scores(0));  
+            
+            // запоминаем класс с наибольшей вероятностью.
+            for (int i = 1; i < 10; i++) {
+                float prob = mnist::sigma(scores(i));
+                if (prob > max_prob) {
+                    max_prob = prob;
+                    predicted = i;
+                }
+            }
+            
+            if (predicted == label) {
+                correct++;
+            }
+            total++;
         }
 
-
-        // прочитала первую строку
-        
-        {
-
-            // auto y_pred = predictor.predict_proba(features);
-
-        }
-
-       
-        
-        //std::cout<<label<<std::endl;
 
         test_file.close();
 
-
-        double accuracy = 0;
+        double accuracy = static_cast<double>(correct)/ total;
         std::cout<<accuracy<<std::endl;
 
        
