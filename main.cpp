@@ -28,8 +28,17 @@ int main(int argc, char* argv[]) {
         // model.cols()        // Количество столбцов (785)
         // model.size()        // Общее количество элементов (7850)
         Eigen::MatrixXf model = mnist::read_mat_from_file(10, 785, modelFile);
+        std::cout << "Matrix loaded: " << model.rows() << "x" << model.cols() << std::endl;
         
         
+        std::ifstream model_file(modelFile);
+        if (!model_file.is_open()) {
+            throw std::runtime_error("Cannot open test file");
+        }
+        // загрузили коэффициенты
+        //auto coefs = mnist::read_vector(model_file);
+        //model_file.close();
+
         // Загружаем тестовые данные
         std::ifstream test_file(testFile);
         if (!test_file.is_open()) {
@@ -39,8 +48,33 @@ int main(int argc, char* argv[]) {
         int label;
         mnist::Classifier::features_t features;
 
+
+        while(mnist::read_features_with_label(test_file, features, label))
+        {
+            // вектор из Eigen на 785 чисел float-ов, коэффициентов z = w1*x1 + w2*x2 + ... + w784*x784 + b
+            Eigen::VectorXf x(785);
+            x(0) = 1.0f;                 // Присваиваем первому элементу 1 тк b - свободный член
+            for (size_t i = 0; i < 784; i++) {
+                x(i + 1) = features[i];  // Присваиваем остальным
+            }
+
+            // Вычисляем все 10 скалярных произведений сразу: A * x
+            // A (10x785) * x (785x1) = scores (10x1)
+            Eigen::VectorXf scores = model * x;
+
+
+        }
+
+
         // прочитала первую строку
-        mnist::read_features_with_label(test_file, features, label);
+        
+        {
+
+            // auto y_pred = predictor.predict_proba(features);
+
+        }
+
+       
         
         //std::cout<<label<<std::endl;
 
