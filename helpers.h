@@ -7,6 +7,12 @@
 
 namespace mnist{
 
+// функция гипотезы логистической регрессии (сигмоидная)  σ(x) = 1 / (1 + e⁻ˣ)
+template<typename T>
+auto sigma(T x) {
+return 1/(1 + std::exp(-x));
+}
+
 /*  Читает матрицу из потока (файла) */
 Eigen::MatrixXf read_mat_from_stream(size_t rows, size_t cols, std::istream& );
 
