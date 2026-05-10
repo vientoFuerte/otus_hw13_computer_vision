@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
         std::string modelFile = argv[2];
         
         // Загружаем модель
-        
+        Eigen::MatrixXf model = mnist::read_mat_from_file(10, 785, modelFile);
         
         // Загружаем тестовые данные
         std::ifstream test_file(testFile);
