@@ -20,10 +20,15 @@ int main(int argc, char* argv[]) {
     
     try {
         std::string testFile = argv[1];
-        std::string modelFile = argv[2];
+        std::string modelFile = argv[2]; //   КОЭФФИЦИЕНТЫ ДЛЯ ВСЕХ 10 КЛАССОВ
         
-        // Загружаем модель
+        // Загружаем модель 10 строк, 785 столбцов, из файла
+        // Eigen::MatrixXf - матрица чисел с плавающей точкой из библиотеки Eigen.
+        // model.rows()        // Количество строк (10)
+        // model.cols()        // Количество столбцов (785)
+        // model.size()        // Общее количество элементов (7850)
         Eigen::MatrixXf model = mnist::read_mat_from_file(10, 785, modelFile);
+        
         
         // Загружаем тестовые данные
         std::ifstream test_file(testFile);
@@ -31,6 +36,17 @@ int main(int argc, char* argv[]) {
             throw std::runtime_error("Cannot open test file");
         }
         
+        int label;
+        mnist::Classifier::features_t features;
+
+        // прочитала первую строку
+        mnist::read_features_with_label(test_file, features, label);
+        
+        //std::cout<<label<<std::endl;
+
+        test_file.close();
+
+
         double accuracy = 0;
         std::cout<<accuracy<<std::endl;
 
