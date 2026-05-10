@@ -40,7 +40,10 @@ bool read_features(std::istream& stream, Classifier::features_t& features) {
 bool read_features_with_label(std::istream& stream, mnist::Classifier::features_t& features, int& label){
 
     std::string line;
-    std::getline(stream, line);
+    // Читаем следующую непустую строку
+    if (!std::getline(stream, line)) {
+        return false;
+    }
 
     //нашли первую метку
     size_t comma_pos = line.find(",");
@@ -51,8 +54,11 @@ bool read_features_with_label(std::istream& stream, mnist::Classifier::features_
     std::string featuresStr = line.substr(comma_pos + 1);
     features.clear();
     std::istringstream linestream{featuresStr};
-    double value;
-    while (linestream >> value) {
+    float value;
+    std::string token;
+
+    while (std::getline(linestream, token, ','))  {
+        value = std::stof(token);
         features.push_back(value);
     }
     return stream.good();
