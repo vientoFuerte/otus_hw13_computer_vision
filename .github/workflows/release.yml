@@ -33,3 +33,12 @@ jobs:
         with:
           name: mnist-classifier
           path: mnist_classifier.tar.gz
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Latest Build
+          files: mnist_classifier.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
