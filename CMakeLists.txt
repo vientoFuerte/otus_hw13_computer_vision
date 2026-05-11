@@ -6,7 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
-set(EIGEN3_INCLUDE_DIR "/usr/local/include/eigen3")
+if(EXISTS "/usr/include/eigen3/Eigen/Dense")
+    set(EIGEN3_INCLUDE_DIR "/usr/include/eigen3")
+else()
+    set(EIGEN3_INCLUDE_DIR "/usr/local/include/eigen3")
+endif()
 
 set(PROJECT_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
 
